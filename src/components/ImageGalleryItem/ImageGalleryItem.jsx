@@ -1,9 +1,10 @@
 import React from 'react';
+import css from './ImageGalleryItem.module.css';
 
-const ImageGalleryItem = ({ webformatURL, tags }) => {
+const ImageGalleryItem = ({ image, tags }) => {
   return (
-    <li>
-      <img src={webformatURL} alt={tags} />
+    <li className={css.item}>
+      <img src={image} alt={tags} className={css.image}/>
     </li>
   );
 };

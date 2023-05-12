@@ -14,19 +14,31 @@ class App extends Component {
     loading: false,
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const { searchValue, page } = this.state;
-    if (prevState.searchValue !== searchValue || prevState.page !== page) {
+  async componentDidUpdate(_, prevState) {
+    if (
+      prevState.searchValue !== this.state.searchValue ||
+      prevState.page !== this.state.page
+    ) {
+      const { searchValue, page } = this.state;
       this.setState({ loading: true });
-      fetchImages(searchValue, page)
-        .then(data => {
-          const searchedImages = data.hits;
-          this.setState({
-            images: [...prevState.images, ...searchedImages],
-            loading: false,
+      try {
+        await fetchImages(searchValue, page)
+          .then(res => {
+            if (!res.ok) {
+              throw new Error('oops');
+            }
+            return res.json();
+          })
+          .then(data => {
+            const searchedImages = data.hits;
+            this.setState(prevState => ({
+              images: [...prevState.images, ...searchedImages],
+              loading: false,
+            }));
           });
-        })
-        .catch(error => console.log(error));
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -41,14 +53,15 @@ class App extends Component {
   };
 
   render() {
-    if (this.state.loading) return <Loader />;
+    const { images, loading } = this.state;
+    if (loading) return <Loader />;
     return (
       <>
         <Searchbar onSubmit={this.handleFormSubmit} />
 
-        {this.state.images.length !== 0 && (
+        {images.length !== 0 && (
           <>
-            <ImageGallery images={this.state.images} />
+            <ImageGallery images={images} />
             <Button onClick={this.handleLoadMoreClick} />
           </>
         )}
