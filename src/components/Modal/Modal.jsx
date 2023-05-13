@@ -1,10 +1,10 @@
 import React from 'react';
 
-const Modal = () => {
+const Modal = ({ image: { url, alt } }) => {
   return (
     <div>
       <div>
-        <img src="" alt="" />
+        <img src={url} alt={alt} />
       </div>
     </div>
   );

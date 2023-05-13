@@ -1,0 +1,5 @@
+.container {
+    max-height: calc(100vh - 80px);
+    max-width: calc(100vw - 10px);
+    text-align: center;
+}

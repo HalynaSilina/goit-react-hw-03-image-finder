@@ -4,7 +4,8 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import fetchImages from '../api/ApiService';
 import Loader from 'components/Loader/Loader';
-// import Modal from './Modal/Modal';
+import css from './App.module.css';
+import Modal from './Modal/Modal';
 
 class App extends Component {
   state = {
@@ -12,6 +13,8 @@ class App extends Component {
     page: 1,
     images: [],
     loading: false,
+    error: '',
+    largeImage: {},
   };
 
   async componentDidUpdate(_, prevState) {
@@ -22,28 +25,24 @@ class App extends Component {
       const { searchValue, page } = this.state;
       this.setState({ loading: true });
       try {
-        await fetchImages(searchValue, page)
-          .then(res => {
-            if (!res.ok) {
-              throw new Error('oops');
-            }
-            return res.json();
-          })
-          .then(data => {
-            const searchedImages = data.hits;
-            this.setState(prevState => ({
-              images: [...prevState.images, ...searchedImages],
-              loading: false,
-            }));
-          });
+        await fetchImages(searchValue, page).then(data => {
+          if (data.hits.length <= 0) {
+            return alert(`Nothing found for ${searchValue}`);
+          }
+          const searchedImages = data.hits;
+          this.setState(prevState => ({
+            images: [...prevState.images, ...searchedImages],
+            loading: false,
+          }));
+        });
       } catch (error) {
-        console.log(error);
+        this.setState({ error });
       }
     }
   }
 
   handleFormSubmit = searchValue => {
-    this.setState({ searchValue, page: 1 });
+    this.setState({ searchValue, page: 1, images: [] });
   };
 
   handleLoadMoreClick = () => {
@@ -52,21 +51,26 @@ class App extends Component {
     }));
   };
 
-  render() {
-    const { images, loading } = this.state;
-    if (loading) return <Loader />;
-    return (
-      <>
-        <Searchbar onSubmit={this.handleFormSubmit} />
+  handleOpenModal = evt => {
+    evt.preventDefault();
+    // const url = evt.currentTarget.elements.href;
+    // const alt = evt.currentTarget.elements.alt;
+    // const largeImage = { url, alt };
+    console.log(evt.target);
+    // this.state({ largeImage });
+  };
 
-        {images.length !== 0 && (
-          <>
-            <ImageGallery images={images} />
-            <Button onClick={this.handleLoadMoreClick} />
-          </>
-        )}
-        {/* <Modal /> */}
-      </>
+  render() {
+    const { images, loading, error } = this.state;
+    return (
+      <div className={css.container}>
+        <Searchbar onSubmit={this.handleFormSubmit} />
+        {loading && <Loader />}
+        {error !== '' && <p>{error.message}</p>}
+        {images.length !== 0 &&<ImageGallery images={images} onClick={this.handleOpenModal} />}
+        {images.length !== 0 && <Button onClick={this.handleLoadMoreClick} />}
+        <Modal image={this.state.largeImage} />
+      </div>
     );
   }
 }

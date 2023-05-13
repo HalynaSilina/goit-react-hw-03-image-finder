@@ -3,8 +3,8 @@
   margin: 0 auto;
   padding: 10px 30px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 200px;
+  grid-template-columns: repeat( 4, 1fr);
+  grid-auto-rows: 180px;
   gap: 15px;
   list-style: none;
 }
