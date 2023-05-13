@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
@@ -15,6 +15,7 @@ class App extends Component {
     loading: false,
     error: '',
     largeImage: {},
+    showModal: false,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -51,25 +52,26 @@ class App extends Component {
     }));
   };
 
-  handleOpenModal = evt => {
-    evt.preventDefault();
-    // const url = evt.currentTarget.elements.href;
-    // const alt = evt.currentTarget.elements.alt;
-    // const largeImage = { url, alt };
-    console.log(evt.target);
-    // this.state({ largeImage });
+  handleOpenModal = image => {
+    const largeImage = { url: image.largeImageURL, alt: image.tags };
+    this.setState({ largeImage, showModal: true });
   };
 
+  handleCloseModal = () => {
+    this.setState({ showModal: false });
+  };
   render() {
-    const { images, loading, error } = this.state;
+    const { images, loading, error, showModal } = this.state;
     return (
       <div className={css.container}>
         <Searchbar onSubmit={this.handleFormSubmit} />
         {loading && <Loader />}
         {error !== '' && <p>{error.message}</p>}
-        {images.length !== 0 &&<ImageGallery images={images} onClick={this.handleOpenModal} />}
+        {images.length !== 0 && (
+          <ImageGallery images={images} onClick={this.handleOpenModal} />
+        )}
         {images.length !== 0 && <Button onClick={this.handleLoadMoreClick} />}
-        <Modal image={this.state.largeImage} />
+        {showModal && <Modal image={this.state.largeImage} onClose={this.handleCloseModal}/>}
       </div>
     );
   }

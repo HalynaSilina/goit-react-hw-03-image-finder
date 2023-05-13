@@ -3,19 +3,9 @@ import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
 
 class ImageGallery extends Component {
-
-componentDidMount() {
-  window.addEventListener('click', this.handleClick)
-}
-
-componentWillUnmount() {
-  window.removeEventListener('click', this.handleClick)
-}
-
-handleClick= evt=> {
-  evt.preventDefault();
-  console.log(evt.currentTarget)
-}
+  onItemClick = image => {
+    this.props.onClick(image);
+  };
 
   render() {
     const images = this.props.images;
@@ -23,10 +13,10 @@ handleClick= evt=> {
       <ul className={css.gallery}>
         {images.map(image => (
           <ImageGalleryItem
+            onClick={() => this.onItemClick(image)}
             key={image.id}
             image={image.webformatURL}
             tags={image.tags}
-            largeImage={image.largeImageURL}
           />
         ))}
       </ul>

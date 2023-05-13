@@ -1,12 +1,10 @@
 import React from 'react';
 import css from './ImageGalleryItem.module.css';
 
-const ImageGalleryItem = ({ image, tags, largeImage }) => {
+const ImageGalleryItem = ({ image, tags, onClick }) => {
   return (
-    <li className={css.item}>
-      <a href={largeImage}>
-        <img src={image} alt={tags} className={css.image} />
-      </a>
+    <li className={css.item} onClick={onClick}>
+      <img src={image} alt={tags} className={css.image} />
     </li>
   );
 };
