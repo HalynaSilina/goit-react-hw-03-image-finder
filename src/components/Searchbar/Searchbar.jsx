@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import { CgSearch } from 'react-icons/cg';
+import { IconContext } from 'react-icons';
 import css from './Searchbar.module.css';
 
 class Searchbar extends Component {
@@ -24,9 +26,12 @@ class Searchbar extends Component {
       <>
         <header>
           <form onSubmit={this.handleSubmit} className={css.searchbar}>
-            <button type="submit" className={css.button}>
-              <span>Search</span>
-            </button>
+            <IconContext.Provider value={{ color: 'blue', size: '2em', style: { verticalAlign: 'middle' } }}>
+              <button type="submit" className={css.button}>
+                <CgSearch />
+                <span className={css.buttonLabel}>Search</span>
+              </button>
+            </IconContext.Provider>
             <input
               type="text"
               value={this.state.value}

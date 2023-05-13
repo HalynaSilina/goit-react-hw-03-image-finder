@@ -13,10 +13,17 @@ class Modal extends Component {
   handleClick = evt => {
     if (evt.code === 'Escape') this.props.onClose();
   };
+
+  onBackdropClickClose = e => {
+    if (e.currentTarget === e.target) {
+      this.props.onClose();
+    }
+  };
+
   render() {
     const { url, alt } = this.props.image;
     return (
-      <div className={css.overlay}>
+      <div className={css.overlay} onClick={this.onBackdropClickClose}>
         <div className={css.modal}>
           <img src={url} alt={alt} />
         </div>
