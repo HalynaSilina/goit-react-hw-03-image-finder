@@ -65,13 +65,18 @@ class App extends Component {
     return (
       <div className={css.container}>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        {loading && <Loader />}
         {error !== '' && <p>{error.message}</p>}
         {images.length !== 0 && (
           <ImageGallery images={images} onClick={this.handleOpenModal} />
         )}
+                {loading && <Loader />}
         {images.length !== 0 && <Button onClick={this.handleLoadMoreClick} />}
-        {showModal && <Modal image={this.state.largeImage} onClose={this.handleCloseModal}/>}
+        {showModal && (
+          <Modal
+            image={this.state.largeImage}
+            onClose={this.handleCloseModal}
+          />
+        )}
       </div>
     );
   }
