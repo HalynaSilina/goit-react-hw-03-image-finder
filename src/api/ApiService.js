@@ -6,7 +6,7 @@ async function fetchImages(value, page) {
     `${BASE_URL}/?q=${value}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
   ).then(response => {
     if (!response.ok) {
-      return Promise.reject(new Error('Oops...something going wrong. Try again later'));
+      return Promise.reject(new Error('Oops...something going wrong. Try again later.'));
     }
     return response.json();
   });

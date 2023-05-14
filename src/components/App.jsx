@@ -32,14 +32,9 @@ class App extends Component {
         await fetchImages(searchValue, page).then(data => {
           if (data.hits.length === 0) {
             this.setState({ loading: false, isActive: false });
-            return toast.error(`Nothing found for ${searchValue}`, {
-              position: 'top-center',
-              autoClose: 2000,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              theme: 'colored',
-            });
+            return Promise.reject(
+              new Error(`Nothing found for "${searchValue}"`)
+            );
           }
           if (images.length + 12 <= data.totalHits) {
             this.setState({ isActive: true });
@@ -56,7 +51,7 @@ class App extends Component {
         this.setState({ loading: false, error });
         toast.error(`${error.message}`, {
           position: 'top-center',
-          autoClose: 5000,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
