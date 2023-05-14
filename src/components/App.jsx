@@ -4,8 +4,10 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Button from './Button/Button';
 import fetchImages from '../api/ApiService';
 import Loader from 'components/Loader/Loader';
-import css from './App.module.css';
 import Modal from './Modal/Modal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import css from './App.module.css';
 
 class App extends Component {
   state = {
@@ -13,9 +15,9 @@ class App extends Component {
     page: 1,
     images: [],
     loading: false,
-    error: '',
     largeImage: {},
     showModal: false,
+    isActive: false,
   };
 
   async componentDidUpdate(_, prevState) {
@@ -23,12 +25,25 @@ class App extends Component {
       prevState.searchValue !== this.state.searchValue ||
       prevState.page !== this.state.page
     ) {
-      const { searchValue, page } = this.state;
+      const { searchValue, page, images } = this.state;
       this.setState({ loading: true });
       try {
         await fetchImages(searchValue, page).then(data => {
-          if (data.hits.length <= 0) {
-            return alert(`Nothing found for ${searchValue}`);
+          if (data.hits.length === 0) {
+            this.setState({ loading: false, isActive: false });
+            return toast.error(`Nothing found for ${searchValue}`, {
+              position: 'top-center',
+              autoClose: 2000,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              theme: 'colored',
+            });
+          }
+          if (images.length + 12 <= data.totalHits) {
+            this.setState({ isActive: true });
+          } else {
+            this.setState({ isActive: false });
           }
           const searchedImages = data.hits;
           this.setState(prevState => ({
@@ -37,7 +52,17 @@ class App extends Component {
           }));
         });
       } catch (error) {
-        this.setState({ error, loading: false });
+        this.setState({ loading: false });
+        toast.error(`${error.message}`, {
+          position: 'top-center',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'colored',
+        });
       }
     }
   }
@@ -61,22 +86,22 @@ class App extends Component {
     this.setState({ showModal: false });
   };
   render() {
-    const { images, loading, error, showModal } = this.state;
+    const { images, loading, showModal, isActive } = this.state;
     return (
       <div className={css.container}>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        {error !== '' && <p>{error.message}</p>}
         {images.length !== 0 && (
           <ImageGallery images={images} onClick={this.handleOpenModal} />
         )}
         {loading && <Loader />}
-        {images.length !== 0 && <Button onClick={this.handleLoadMoreClick} />}
+        {isActive && <Button onClick={this.handleLoadMoreClick} />}
         {showModal && (
           <Modal
             image={this.state.largeImage}
             onClose={this.handleCloseModal}
           />
         )}
+        <ToastContainer />
       </div>
     );
   }
