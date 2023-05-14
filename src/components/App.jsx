@@ -16,6 +16,7 @@ class App extends Component {
     images: [],
     loading: false,
     largeImage: {},
+    error: null,
     showModal: false,
     isActive: false,
   };
@@ -52,7 +53,7 @@ class App extends Component {
           }));
         });
       } catch (error) {
-        this.setState({ loading: false });
+        this.setState({ loading: false, error });
         toast.error(`${error.message}`, {
           position: 'top-center',
           autoClose: 5000,
@@ -86,10 +87,11 @@ class App extends Component {
     this.setState({ showModal: false });
   };
   render() {
-    const { images, loading, showModal, isActive } = this.state;
+    const { images, loading, error, showModal, isActive } = this.state;
     return (
       <div className={css.container}>
         <Searchbar onSubmit={this.handleFormSubmit} />
+        {error && <p className={css.error}>{error.message}</p>}
         {images.length !== 0 && (
           <ImageGallery images={images} onClick={this.handleOpenModal} />
         )}
